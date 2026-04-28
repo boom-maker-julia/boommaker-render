@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Boom Maker — render</title>
+<meta name="viewport" content="width=1080,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #07070A; font-family: 'Geist', system-ui, sans-serif; overflow: hidden; }
+  * { box-sizing: border-box; }
+  /* Pin frame to viewport top-left, fixed 1080×1080 */
+  #render-root { width: 1080px; height: 1080px; }
+</style>
+</head>
+<body>
+<div id="render-root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="templates/bm-shared.jsx"></script>
+<script type="text/babel" src="templates/bm-tip.jsx"></script>
+<script type="text/babel" src="templates/bm-cover.jsx"></script>
+<script type="text/babel" src="templates/bm-case.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+const params = new URLSearchParams(window.location.search);
+const get = (k, fallback) => params.has(k) ? params.get(k) : fallback;
+const getBool = (k, fallback) => {
+  if (!params.has(k)) return fallback;
+  const v = params.get(k).toLowerCase();
+  return v === "1" || v === "true" || v === "yes" || v === "on";
+};
+const getNum = (k, fallback) => {
+  if (!params.has(k)) return fallback;
+  const n = Number(params.get(k));
+  return Number.isNaN(n) ? fallback : n;
+};
+
+const template = get("template", "tip"); // tip | cover | case
+const theme    = get("theme", "dark");   // dark | light (tip only)
+const showLogo = getBool("showLogo", true);
+const accent   = get("accent", template === "cover" ? "boom" : template === "case" ? "cyan" : "violet");
+const font     = get("font", "geist");
+
+// font override
+const fontMap = {
+  geist:   "'Geist'",
+  inter:   "'Inter'",
+  grotesk: "'Space Grotesk'",
+};
+const sans = fontMap[font] || fontMap.geist;
+const styleEl = document.createElement("style");
+styleEl.textContent = `.bm-frame, .bm-frame h1, .bm-frame p, .bm-frame div, .bm-frame span { font-family: ${sans}, 'Helvetica Neue', Arial, sans-serif; }`;
+document.head.appendChild(styleEl);
+
+let element = null;
+
+if (template === "tip") {
+  const data = {
+    tipNumber: getNum("tipNumber", 7),
+    eyebrow:   get("tipEyebrow", "Astuce no-code"),
+    title:     get("tipTitle", "Automatisez d'abord"),
+    titleEm:   get("tipTitleEm", "ce qui vous coûte une heure par jour."),
+    body:      get("tipBody", "Avant de viser l'agent IA qui fait tout, scriptez les 3 micro-tâches qui mangent vos matinées."),
+    points: [
+      { tag: get("tipP1Tag", "REPÉRER"),    text: get("tipP1Text", "Listez les 5 actions répétées chaque semaine.") },
+      { tag: get("tipP2Tag", "MESURER"),    text: get("tipP2Text", "Chronométrez. Sous 15min/jour, ça vaut le coup.") },
+      { tag: get("tipP3Tag", "DÉCLENCHER"), text: get("tipP3Text", "Un trigger clair → un workflow → un résultat.") },
+    ],
+    footerNote: get("tipFooter", "boommaker.io"),
+  };
+  element = <ThemedTip data={data} showLogo={showLogo} theme={theme} accent={accent} />;
+}
+
+if (template === "cover") {
+  const data = {
+    kicker:       get("coverKicker", "Boom Maker — Playbook"),
+    title1:       get("coverTitle1", "5 workflows"),
+    titleEm:      get("coverTitleEm", "qui font gagner"),
+    title2:       get("coverTitle2", "10h / semaine."),
+    subtitle:     get("coverSubtitle", "Le carrousel à lire avant d'embaucher pour copier-coller des leads."),
+    totalSlides:  getNum("coverTotalSlides", 8),
+    swipeText:    get("coverSwipe", "Swipe"),
+  };
+  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} />;
+}
+
+if (template === "case") {
+  const data = {
+    sector:       get("caseSector", "E-COMMERCE / DTC"),
+    clientName:   get("caseClient", "Atelier Verel"),
+    headline:     get("caseHeadline", "On a remplacé 4 outils SaaS par"),
+    headlineEm:   get("caseHeadlineEm", "un seul agent IA."),
+    metric:       get("caseMetric", "−68"),
+    metricUnit:   get("caseMetricUnit", "%"),
+    metricLabel:  get("caseMetricLabel", "Coût opérationnel mensuel"),
+    deltaLabel:   get("caseDelta", "÷ 3,1"),
+    before:       get("caseBefore", "2 840 €/mois"),
+    after:        get("caseAfter", "910 €/mois"),
+    proofs: [
+      get("caseProof1", "Setup en 11 jours"),
+      get("caseProof2", "0 ligne de code"),
+      get("caseProof3", "ROI < 6 semaines"),
+    ],
+    footerHandle: get("caseFooter", "boommaker.io / cas-clients"),
+  };
+  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} />;
+}
+
+if (!element) {
+  element = <div style={{ padding: 80, color: "#fff", fontSize: 24 }}>
+    Param <code>?template=</code> manquant. Valeurs : <code>tip</code>, <code>cover</code>, <code>case</code>.
+  </div>;
+}
+
+ReactDOM.createRoot(document.getElementById("render-root")).render(element);
+
+// Signal "ready" for screenshot services that can wait on a flag
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.body.setAttribute("data-render-ready", "true");
+  }, 800); // let fonts settle
+});
+</script>
+</body>
+</html>

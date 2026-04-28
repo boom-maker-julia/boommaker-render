@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Boom Maker — Render Index</title>
+<style>
+  body { font-family: system-ui, -apple-system, sans-serif; background:#0A0A0F; color:#F5F5F7; padding:40px; max-width:780px; margin:auto; line-height:1.6; }
+  h1 { font-weight:700; letter-spacing:-0.02em; }
+  code { background:#1a1a24; padding:2px 6px; border-radius:4px; font-size:0.9em; }
+  a { color:#00E0D5; text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .grid { display:grid; gap:14px; margin-top:24px; }
+  .card { background:#14141C; padding:18px 22px; border-radius:10px; border:1px solid rgba(255,255,255,0.08); }
+  .card h3 { margin:0 0 6px; font-size:1rem; }
+  .muted { color:#9A9AA8; font-size:0.9em; }
+</style>
+</head>
+<body>
+<h1>Boom Maker — Templates</h1>
+<p>Page de rendu pilotée par URL params. Format fixe 1080×1080. Pour automatisation Make → HTMLCSStoImage → LinkedIn.</p>
+<p class="muted">Voir le <a href="README.md">README</a> pour le mapping complet et l'intégration Make.</p>
+
+<div class="grid">
+  <a class="card" href="render.html?template=tip">
+    <h3>01 — Tip</h3>
+    <div class="muted">render.html?template=tip</div>
+  </a>
+  <a class="card" href="render.html?template=cover">
+    <h3>02 — Carrousel · Couverture</h3>
+    <div class="muted">render.html?template=cover</div>
+  </a>
+  <a class="card" href="render.html?template=case">
+    <h3>03 — Étude de cas</h3>
+    <div class="muted">render.html?template=case</div>
+  </a>
+</div>
+</body>
+</html>
