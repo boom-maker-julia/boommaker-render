@@ -1,11 +1,14 @@
 /* global React, Frame, Grain, TemplateFooter, BMLogo */
 // Template — BLOG / Nouvel article
-// Hero image area, badge, titre éditorial, méta (durée, catégorie), CTA.
+// Hero image (real cover URL ou placeholder), badge, titre éditorial, méta (durée, catégorie), CTA.
+// FIX 2026-05-05 : line-clamp + font-size adaptatif pour titres longs (3 lignes max).
+// FEAT 2026-05-05 : prop imageUrl → si fournie, affiche l'image en object-fit cover.
 
 const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark" }) => {
   const {
     category, articleNumber, title, titleEm,
     excerpt, readTime, publishDate, author, footerHandle,
+    imageUrl,
   } = data;
   const isLight = theme === "light";
 
@@ -20,6 +23,17 @@ const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark"
     : "linear-gradient(120deg, #B794FF 10%, #00E0D5 90%)";
 
   const accentColor = isLight ? "#5B2DE6" : "#B794FF";
+
+  // Adaptive title size based on combined length (title + titleEm)
+  const titleLen = (title || "").length + (titleEm || "").length;
+  let titleFontSize = 76;       // short titles (<32 chars total)
+  if (titleLen > 32) titleFontSize = 62;   // medium
+  if (titleLen > 50) titleFontSize = 52;   // long
+  if (titleLen > 70) titleFontSize = 44;   // very long
+  const titleLineHeight = titleFontSize > 60 ? 0.98 : 1.04;
+
+  // Adaptive excerpt size — slightly smaller if title is large
+  const excerptFontSize = titleFontSize >= 62 ? 22 : 20;
 
   return (
     <Frame theme={theme} accent={accent}>
@@ -65,96 +79,132 @@ const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark"
         </div>
       </div>
 
-      {/* Hero image area placeholder */}
+      {/* Hero image area — real image OR decorative placeholder */}
       <div style={{
-        position: "absolute", top: 130, left: 64, right: 64, height: 360, zIndex: 5,
+        position: "absolute", top: 130, left: 64, right: 64, height: 320, zIndex: 5,
         borderRadius: 24, overflow: "hidden",
         border: `1px solid ${surfaceBorder}`,
-        background: `
+        background: imageUrl ? "#000" : `
           linear-gradient(135deg,
             ${isLight ? "rgba(139,92,255,0.10)" : "rgba(139,92,255,0.22)"} 0%,
             ${isLight ? "rgba(0,224,213,0.10)"  : "rgba(0,224,213,0.18)"}  50%,
             ${isLight ? "rgba(255,233,74,0.10)" : "rgba(255,233,74,0.16)"} 100%)
         `,
         display: "flex", alignItems: "center", justifyContent: "center",
-        position: "absolute",
       }}>
-        {/* Decorative lines */}
-        <svg style={{ position: "absolute", inset: 0, opacity: 0.3 }} width="100%" height="100%" preserveAspectRatio="none">
-          <defs>
-            <pattern id="blogPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 0 20 L 40 20" stroke={isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.08)"} strokeWidth="1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#blogPattern)" />
-        </svg>
+        {imageUrl ? (
+          <>
+            <img
+              src={imageUrl}
+              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
+              style={{
+                width: "100%", height: "100%", objectFit: "cover", display: "block"
+              }}
+              onError={(e) => { e.currentTarget.style.display = "none"; }}
+            />
+            {/* Category badge overlayed on image */}
+            <div style={{
+              position: "absolute", top: 16, left: 16, zIndex: 2,
+              display: "inline-flex", alignItems: "center", gap: 10,
+              padding: "8px 16px",
+              background: "rgba(10,10,14,0.65)",
+              border: "1px solid rgba(255,255,255,0.2)",
+              backdropFilter: "blur(12px)",
+              borderRadius: 999,
+              fontFamily: "'Geist Mono', monospace",
+              fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase",
+              color: "#F5F5F7",
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: 999, background: accentColor, boxShadow: `0 0 10px ${accentColor}` }} />
+              {category}
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Decorative pattern */}
+            <svg style={{ position: "absolute", inset: 0, opacity: 0.3 }} width="100%" height="100%" preserveAspectRatio="none">
+              <defs>
+                <pattern id="blogPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 0 20 L 40 20" stroke={isLight ? "rgba(0,0,0,0.08)" : "rgba(255,255,255,0.08)"} strokeWidth="1" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#blogPattern)" />
+            </svg>
 
-        {/* Big quote mark watermark */}
-        <div style={{
-          position: "absolute", top: -40, left: 30,
-          fontFamily: "'Instrument Serif', serif", fontStyle: "italic",
-          fontSize: 320, lineHeight: 0.7,
-          color: accentColor, opacity: 0.18, userSelect: "none",
-        }}>“</div>
+            {/* Big quote watermark */}
+            <div style={{
+              position: "absolute", top: -40, left: 30,
+              fontFamily: "'Instrument Serif', serif", fontStyle: "italic",
+              fontSize: 320, lineHeight: 0.7,
+              color: accentColor, opacity: 0.18, userSelect: "none",
+            }}>"</div>
 
-        {/* Category centered */}
-        <div style={{
-          position: "relative", zIndex: 2,
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 14,
-        }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 12,
-            padding: "10px 20px",
-            background: isLight ? "rgba(255,255,255,0.7)" : "rgba(20,20,28,0.6)",
-            border: `1px solid ${surfaceBorder}`,
-            backdropFilter: "blur(12px)",
-            borderRadius: 999,
-            fontFamily: "'Geist Mono', monospace",
-            fontSize: 14, letterSpacing: "0.2em", textTransform: "uppercase", color: ink,
-          }}>
-            <span style={{ width: 6, height: 6, borderRadius: 999, background: accentColor, boxShadow: `0 0 10px ${accentColor}` }} />
-            {category}
-          </div>
-          <div style={{
-            fontFamily: "'Geist Mono', monospace",
-            fontSize: 12, letterSpacing: "0.16em", textTransform: "uppercase", color: mute,
-            opacity: 0.7,
-          }}>
-            [ Cover image · à remplacer ]
-          </div>
-        </div>
+            {/* Category centered */}
+            <div style={{
+              position: "relative", zIndex: 2,
+              display: "inline-flex", alignItems: "center", gap: 12,
+              padding: "10px 20px",
+              background: isLight ? "rgba(255,255,255,0.7)" : "rgba(20,20,28,0.6)",
+              border: `1px solid ${surfaceBorder}`,
+              backdropFilter: "blur(12px)",
+              borderRadius: 999,
+              fontFamily: "'Geist Mono', monospace",
+              fontSize: 14, letterSpacing: "0.2em", textTransform: "uppercase", color: ink,
+            }}>
+              <span style={{ width: 6, height: 6, borderRadius: 999, background: accentColor, boxShadow: `0 0 10px ${accentColor}` }} />
+              {category}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Title */}
+      {/* Title — adaptive font + line-clamp 3 */}
       <div style={{
-        position: "absolute", left: 64, right: 64, top: 530, zIndex: 10,
+        position: "absolute", left: 64, right: 64, top: 480, zIndex: 10,
+        maxHeight: 240, overflow: "hidden",
       }}>
         <h1 style={{
           fontFamily: "'Geist', sans-serif",
-          fontWeight: 600, fontSize: 76, lineHeight: 0.98,
-          letterSpacing: "-0.04em", margin: 0, color: ink, textWrap: "balance",
+          fontWeight: 600,
+          fontSize: titleFontSize,
+          lineHeight: titleLineHeight,
+          letterSpacing: "-0.04em",
+          margin: 0, color: ink,
+          textWrap: "balance",
+          display: "-webkit-box",
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
         }}>
-          {title}{" "}
-          <span style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontStyle: "italic", fontWeight: 400,
-            background: italicGrad,
-            WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent",
-            paddingRight: "0.08em",
-          }}>{titleEm}</span>
+          {title}{titleEm ? " " : ""}
+          {titleEm && (
+            <span style={{
+              fontFamily: "'Instrument Serif', serif",
+              fontStyle: "italic", fontWeight: 400,
+              background: italicGrad,
+              WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent",
+              paddingRight: "0.08em",
+            }}>{titleEm}</span>
+          )}
         </h1>
       </div>
 
-      {/* Excerpt */}
+      {/* Excerpt — repositioned to start below title block, with line-clamp */}
       <div style={{
-        position: "absolute", left: 64, right: 380, bottom: 240, zIndex: 10,
+        position: "absolute", left: 64, right: 380, top: 760, zIndex: 10,
+        maxHeight: 130, overflow: "hidden",
       }}>
         <p style={{
-          fontSize: 22, lineHeight: 1.45, margin: 0,
+          fontSize: excerptFontSize, lineHeight: 1.45, margin: 0,
           color: ink2, textWrap: "pretty", maxWidth: 600, fontWeight: 300,
+          display: "-webkit-box",
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
         }}>{excerpt}</p>
         <div style={{
-          marginTop: 18,
+          marginTop: 14,
           display: "flex", alignItems: "center", gap: 14,
           fontFamily: "'Geist Mono', monospace",
           fontSize: 12, letterSpacing: "0.14em", textTransform: "uppercase", color: mute,
@@ -165,7 +215,7 @@ const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark"
         </div>
       </div>
 
-      {/* CTA */}
+      {/* CTA — bottom right, before footer */}
       <div style={{
         position: "absolute", bottom: 200, right: 64, zIndex: 10,
         display: "flex", alignItems: "center", gap: 14,
