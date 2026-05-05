@@ -115,23 +115,7 @@ const TipContent = ({ data, showLogo, isLight, accent = "violet" }) => {
       </div>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
-      <div style={{
-        position: "absolute", left: 64, right: 64, bottom: 56,
-        display: "flex", alignItems: "center", justifyContent: "space-between", zIndex: 20,
-      }}>
-        {showLogo ? <BMLogo color={ink} style={{ height: 28, width: "auto" }} /> : <div />}
-        <div style={{
-          fontFamily: "'Geist Mono', monospace",
-          fontSize: 13, letterSpacing: "0.14em", textTransform: "uppercase", color: mute,
-          display: "flex", alignItems: "center", gap: 10,
-        }}>
-          <span style={{
-            width: 6, height: 6, borderRadius: 999,
-            background: "#00E0D5", boxShadow: "0 0 10px #00E0D5",
-          }} />
-          {footerNote}
-        </div>
-      </div>
+      <TemplateFooter showLogo={showLogo} isDark={!isLight} accent={isLight ? "#007D78" : "#00E0D5"} />
     </>
   );
 };

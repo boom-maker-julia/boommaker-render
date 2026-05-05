@@ -17,14 +17,16 @@
 <body>
 <div id="render-root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 
 <script type="text/babel" src="templates/bm-shared.jsx"></script>
 <script type="text/babel" src="templates/bm-tip.jsx"></script>
 <script type="text/babel" src="templates/bm-cover.jsx"></script>
 <script type="text/babel" src="templates/bm-case.jsx"></script>
+<script type="text/babel" src="templates/bm-tool.jsx"></script>
+<script type="text/babel" src="templates/bm-blog.jsx"></script>
 
 <script type="text/babel" data-presets="env,react">
 const params = new URLSearchParams(window.location.search);
@@ -40,10 +42,17 @@ const getNum = (k, fallback) => {
   return Number.isNaN(n) ? fallback : n;
 };
 
-const template = get("template", "tip"); // tip | cover | case
-const theme    = get("theme", "dark");   // dark | light (tip only)
+const template = get("template", "tip"); // tip | cover | case | tool | blog
+const theme    = get("theme", "dark");   // dark | light (all templates)
 const showLogo = getBool("showLogo", true);
-const accent   = get("accent", template === "cover" ? "boom" : template === "case" ? "cyan" : "violet");
+const accentDefault = {
+  tip: "violet",
+  cover: "boom",
+  case: "cyan",
+  tool: "boom",
+  blog: "violet",
+};
+const accent   = get("accent", accentDefault[template] || "violet");
 const font     = get("font", "geist");
 
 // font override
@@ -56,6 +65,10 @@ const sans = fontMap[font] || fontMap.geist;
 const styleEl = document.createElement("style");
 styleEl.textContent = `.bm-frame, .bm-frame h1, .bm-frame p, .bm-frame div, .bm-frame span { font-family: ${sans}, 'Helvetica Neue', Arial, sans-serif; }`;
 document.head.appendChild(styleEl);
+
+// Body background follows theme so screenshots look clean
+document.documentElement.style.background = theme === "light" ? "#F5F4EE" : "#07070A";
+document.body.style.background = theme === "light" ? "#F5F4EE" : "#07070A";
 
 let element = null;
 
@@ -86,7 +99,7 @@ if (template === "cover") {
     totalSlides:  getNum("coverTotalSlides", 8),
     swipeText:    get("coverSwipe", "Swipe"),
   };
-  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} />;
+  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} />;
 }
 
 if (template === "case") {
@@ -108,12 +121,46 @@ if (template === "case") {
     ],
     footerHandle: get("caseFooter", "boommaker.io / cas-clients"),
   };
-  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} />;
+  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+}
+
+if (template === "tool") {
+  const data = {
+    pickNumber:   getNum("toolPickNumber", 4),
+    category:     get("toolCategory", "AUTOMATISATION / NO-CODE"),
+    toolName:     get("toolName", "Make.com"),
+    tagline:      get("toolTagline", "Le couteau suisse des scénarios"),
+    headline:     get("toolHeadline", "Le seul outil qui m'a permis"),
+    headlineEm:   get("toolHeadlineEm", "d'arrêter d'embaucher pour copier-coller."),
+    rating:       getNum("toolRating", 5),
+    ratingMax:    getNum("toolRatingMax", 5),
+    why1:         get("toolWhy1", "Conditions visuelles, sans une ligne de code."),
+    why2:         get("toolWhy2", "Quand t'as 4+ outils à connecter en cascade."),
+    why3:         get("toolWhy3", "9€/mois, scaling clair, communauté FR active."),
+    useCase:      get("toolUseCase", "Lead arrive sur le site → Airtable enrichit via Apollo → Slack ping le commercial → relance auto à J+3 si pas de réponse."),
+    footerHandle: get("toolFooter", "boommaker.io / outils"),
+  };
+  element = <TemplateTool data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+}
+
+if (template === "blog") {
+  const data = {
+    category:      get("blogCategory", "AUTOMATISATION"),
+    articleNumber: getNum("blogArticleNumber", 12),
+    title:         get("blogTitle", "Comment j'ai remplacé"),
+    titleEm:       get("blogTitleEm", "ma boîte mail par un agent IA."),
+    excerpt:       get("blogExcerpt", "Pendant 6 mois j'ai testé 7 setups différents pour automatiser ma gestion d'inbox. Voici celui qui tient et qui m'a fait gagner 1h/jour."),
+    readTime:      get("blogReadTime", "8 min"),
+    publishDate:   get("blogPublishDate", "05.05.2026"),
+    author:        get("blogAuthor", "Julia Levy"),
+    footerHandle:  get("blogFooter", "boommaker.io / blog"),
+  };
+  element = <TemplateBlog data={data} showLogo={showLogo} accent={accent} theme={theme} />;
 }
 
 if (!element) {
   element = <div style={{ padding: 80, color: "#fff", fontSize: 24 }}>
-    Param <code>?template=</code> manquant. Valeurs : <code>tip</code>, <code>cover</code>, <code>case</code>.
+    Param <code>?template=</code> manquant. Valeurs : <code>tip</code>, <code>cover</code>, <code>case</code>, <code>tool</code>, <code>blog</code>.
   </div>;
 }
 
@@ -123,7 +170,7 @@ ReactDOM.createRoot(document.getElementById("render-root")).render(element);
 window.addEventListener("load", () => {
   setTimeout(() => {
     document.body.setAttribute("data-render-ready", "true");
-  }, 800); // let fonts settle
+  }, 1200); // let fonts settle
 });
 </script>
 </body>
