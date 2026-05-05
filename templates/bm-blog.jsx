@@ -73,20 +73,19 @@ const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark"
         </div>
       </div>
 
-      {/* Hero image area — image OR placeholder. Always rendered as nested children inside parent div */}
+      {/* Hero image area — image OR placeholder. Image absolutely positioned to fill, badge overlay absolute */}
       <div style={{
         position: "absolute", top: 130, left: 64, right: 64, height: 320, zIndex: 5,
         borderRadius: 24, overflow: "hidden",
         border: `1px solid ${surfaceBorder}`,
         background: hasImage ? "#000" : `linear-gradient(135deg, ${isLight ? "rgba(139,92,255,0.10)" : "rgba(139,92,255,0.22)"} 0%, ${isLight ? "rgba(0,224,213,0.10)" : "rgba(0,224,213,0.18)"} 50%, ${isLight ? "rgba(255,233,74,0.10)" : "rgba(255,233,74,0.16)"} 100%)`,
-        display: "flex", alignItems: "center", justifyContent: "center",
       }}>
         {hasImage && (
           <img
             src={imageUrl}
             crossOrigin="anonymous"
             referrerPolicy="no-referrer"
-            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           />
         )}
         {!hasImage && (
@@ -109,17 +108,29 @@ const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark"
             {'“'}
           </div>
         )}
-        <div style={{
-          position: "relative", zIndex: 2,
+        {/* Category badge — absolute pos top-left if image, centered if no image */}
+        <div style={hasImage ? {
+          position: "absolute", top: 18, left: 18, zIndex: 2,
+          display: "inline-flex", alignItems: "center", gap: 10,
+          padding: "10px 18px",
+          background: "rgba(10,10,14,0.7)",
+          border: "1px solid rgba(255,255,255,0.25)",
+          backdropFilter: "blur(12px)",
+          borderRadius: 999,
+          fontFamily: "'Geist Mono', monospace",
+          fontSize: 13, letterSpacing: "0.2em", textTransform: "uppercase",
+          color: "#F5F5F7",
+        } : {
+          position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", zIndex: 2,
           display: "inline-flex", alignItems: "center", gap: 12,
           padding: "10px 20px",
-          background: hasImage ? "rgba(10,10,14,0.65)" : (isLight ? "rgba(255,255,255,0.7)" : "rgba(20,20,28,0.6)"),
-          border: `1px solid ${hasImage ? "rgba(255,255,255,0.2)" : surfaceBorder}`,
+          background: isLight ? "rgba(255,255,255,0.7)" : "rgba(20,20,28,0.6)",
+          border: `1px solid ${surfaceBorder}`,
           backdropFilter: "blur(12px)",
           borderRadius: 999,
           fontFamily: "'Geist Mono', monospace",
           fontSize: 14, letterSpacing: "0.2em", textTransform: "uppercase",
-          color: hasImage ? "#F5F5F7" : ink,
+          color: ink,
         }}>
           <span style={{ width: 6, height: 6, borderRadius: 999, background: accentColor, boxShadow: `0 0 10px ${accentColor}` }} />
           {category}
