@@ -1,8 +1,8 @@
-/* global React, Frame, Grain, TemplateFooter, BMLogo */
+/* global React, Frame, Grain, TemplateFooter, BMLogo, ContentBox */
 // Template — TOOL / Recommandation outil
 // Hero logo placeholder, badge Tools #N, note pictogramme, 3 raisons.
 
-const TemplateTool = ({ data, showLogo = true, accent = "boom", theme = "dark" }) => {
+const TemplateTool = ({ data, showLogo = true, accent = "boom", theme = "dark", format = "square" }) => {
   const {
     pickNumber, category, toolName, tagline,
     headline, headlineEm, rating, ratingMax,
@@ -26,7 +26,7 @@ const TemplateTool = ({ data, showLogo = true, accent = "boom", theme = "dark" }
   const fires = Array.from({ length: ratingMax || 5 }, (_, i) => i < rating);
 
   return (
-    <Frame theme={theme} accent={accent}>
+    <Frame theme={theme} accent={accent} format={format}>
       {/* Background */}
       <div style={{
         position: "absolute", inset: 0, zIndex: 0,
@@ -39,6 +39,7 @@ const TemplateTool = ({ data, showLogo = true, accent = "boom", theme = "dark" }
         `
       }} />
 
+      <ContentBox format={format}>
       {/* Top bar */}
       <div style={{
         position: "absolute", top: 56, left: 64, right: 64, zIndex: 10,
@@ -221,6 +222,7 @@ const TemplateTool = ({ data, showLogo = true, accent = "boom", theme = "dark" }
           {useCase}
         </div>
       </div>
+      </ContentBox>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
       <TemplateFooter showLogo={showLogo} handle={footerHandle} isDark={!isLight} accent={isLight ? "#A88B00" : "#FFE94A"} />

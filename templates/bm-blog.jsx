@@ -1,8 +1,8 @@
-/* global React, Frame, Grain, TemplateFooter, BMLogo */
+/* global React, Frame, Grain, TemplateFooter, BMLogo, ContentBox */
 // Template — BLOG / Nouvel article
 // FIX 2026-05-05 v2 : line-clamp + adaptive font + imageUrl support, sans fragments JSX (compat Babel standalone)
 
-const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark" }) => {
+const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark", format = "square" }) => {
   const {
     category, articleNumber, title, titleEm,
     excerpt, readTime, publishDate, author, footerHandle,
@@ -33,7 +33,7 @@ const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark"
   const hasImage = imageUrl && imageUrl.length > 0;
 
   return (
-    <Frame theme={theme} accent={accent}>
+    <Frame theme={theme} accent={accent} format={format}>
       <div style={{
         position: "absolute", inset: 0, zIndex: 0,
         background: isLight ? `
@@ -45,6 +45,7 @@ const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark"
         `,
       }} />
 
+      <ContentBox format={format}>
       <div style={{
         position: "absolute", top: 56, left: 64, right: 64, zIndex: 10,
         display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -210,6 +211,7 @@ const TemplateBlog = ({ data, showLogo = true, accent = "violet", theme = "dark"
           <path d="M1 7 H18 M12 1 L18 7 L12 13" stroke={accentColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
+      </ContentBox>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
       <TemplateFooter showLogo={showLogo} handle={footerHandle} isDark={!isLight} accent={accentColor} />

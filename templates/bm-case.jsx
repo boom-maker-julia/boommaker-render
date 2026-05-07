@@ -1,9 +1,9 @@
-/* global React, Frame, Grain, TemplateFooter */
+/* global React, Frame, Grain, TemplateFooter, ContentBox */
 // Template 3 — CASE STUDY / Étude de cas
 // Big metric with multi-stop gradient, before/after tape, proofs.
 // Supports theme="dark" (default) and theme="light".
 
-const TemplateCase = ({ data, showLogo, accent = "cyan", theme = "dark" }) => {
+const TemplateCase = ({ data, showLogo, accent = "cyan", theme = "dark", format = "square" }) => {
   const {
     sector, clientName, headline, headlineEm,
     metric, metricUnit, metricLabel,
@@ -40,7 +40,7 @@ const TemplateCase = ({ data, showLogo, accent = "cyan", theme = "dark" }) => {
   "linear-gradient(135deg, rgba(0,224,213,0.18), rgba(139,92,255,0.18))";
 
   return (
-    <Frame theme={theme} accent={accent}>
+    <Frame theme={theme} accent={accent} format={format}>
       <div style={{
         position: "absolute", inset: 0, zIndex: 0,
         background: isLight ?
@@ -54,6 +54,7 @@ const TemplateCase = ({ data, showLogo, accent = "cyan", theme = "dark" }) => {
             `
       }} />
 
+      <ContentBox format={format}>
       {/* Top bar */}
       <div style={{
         position: "absolute", top: 56, left: 64, right: 64, zIndex: 10,
@@ -210,6 +211,7 @@ const TemplateCase = ({ data, showLogo, accent = "cyan", theme = "dark" }) => {
           </div>
         )}
       </div>
+      </ContentBox>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
       <TemplateFooter showLogo={showLogo} handle={footerHandle} isDark={!isLight} accent={accentTeal} />

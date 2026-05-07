@@ -20,8 +20,8 @@ const BMLogo = ({ color = "currentColor", style }) =>
   </svg>;
 
 
-// ---- Frame: 1080×1080 wrapper for all templates ----
-const Frame = ({ children, theme = "dark", accent = "violet", style }) => {
+// ---- Frame: 1080×1080 (square) or 1080×1350 (Instagram 4:5) wrapper for all templates ----
+const Frame = ({ children, theme = "dark", accent = "violet", format = "square", style }) => {
   const accentMap = {
     violet: { primary: "#8B5CFF", secondary: "#B794FF" },
     cyan: { primary: "#00E0D5", secondary: "#5BF2EC" },
@@ -30,9 +30,11 @@ const Frame = ({ children, theme = "dark", accent = "violet", style }) => {
   };
   const a = accentMap[accent] || accentMap.violet;
   const isDark = theme === "dark";
+  const isPortrait = format === "portrait";
+  const frameH = isPortrait ? 1350 : 1080;
   return (
-    <div className={`bm-frame ${isDark ? "is-dark" : "is-light"}`} style={{
-      width: 1080, height: 1080, position: "relative", overflow: "hidden",
+    <div className={`bm-frame ${isDark ? "is-dark" : "is-light"} ${isPortrait ? "is-portrait" : "is-square"}`} style={{
+      width: 1080, height: frameH, position: "relative", overflow: "hidden",
       background: isDark ? "#07070A" : "#F5F4EE",
       color: isDark ? "#F5F5F7" : "#0A0A0E",
       fontFamily: "'Geist','Helvetica Neue',Arial,sans-serif",
@@ -95,4 +97,16 @@ const accentColors = {
   pink: { primary: "#FF4FA6", secondary: "#FF8AC4" }
 };
 
-Object.assign(window, { BMLogo, Frame, Grain, TemplateFooter, accentColors });
+// ---- ContentBox: keeps template inner content in 1080x1080 coords, centered ----
+// Square format: transparent passthrough. Portrait: vertically centers 1080x1080 inside 1080x1350.
+const ContentBox = ({ children, format = "square" }) => {
+  const isPortrait = format === "portrait";
+  const yOffset = isPortrait ? (1350 - 1080) / 2 : 0;
+  return (
+    <div style={{ position: "absolute", top: yOffset, left: 0, width: 1080, height: 1080, zIndex: 5 }}>
+      {children}
+    </div>
+  );
+};
+
+Object.assign(window, { BMLogo, Frame, Grain, TemplateFooter, ContentBox, accentColors });

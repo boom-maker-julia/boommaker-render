@@ -1,8 +1,8 @@
-/* global React, Frame, Grain, TemplateFooter, BMLogo */
+/* global React, Frame, Grain, TemplateFooter, BMLogo, ContentBox */
 // Template 1 — TIP / Astuce
 // Big tip number, eyebrow, headline (with serif italic gradient), 3 step cards.
 
-const TipContent = ({ data, showLogo, isLight, accent = "violet" }) => {
+const TipContent = ({ data, showLogo, isLight, accent = "violet", format = "square" }) => {
   const { tipNumber, eyebrow, title, titleEm, body, points, footerNote } = data;
   const ink = isLight ? "#0A0A0E" : "#F5F5F7";
   const ink2 = isLight ? "#2A2A34" : "#D8D8E0";
@@ -23,6 +23,7 @@ const TipContent = ({ data, showLogo, isLight, accent = "violet" }) => {
 
   return (
     <>
+      <ContentBox format={format}>
       {/* Top bar */}
       <div style={{
         position: "absolute", top: 56, left: 64, right: 64, zIndex: 10,
@@ -113,6 +114,7 @@ const TipContent = ({ data, showLogo, isLight, accent = "violet" }) => {
           </div>
         ))}
       </div>
+      </ContentBox>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
       <TemplateFooter showLogo={showLogo} isDark={!isLight} accent={isLight ? "#007D78" : "#00E0D5"} />
@@ -120,8 +122,8 @@ const TipContent = ({ data, showLogo, isLight, accent = "violet" }) => {
   );
 };
 
-const TemplateTip = ({ data, showLogo, accent = "violet" }) => (
-  <Frame theme="dark" accent={accent}>
+const TemplateTip = ({ data, showLogo, accent = "violet", format = "square" }) => (
+  <Frame theme="dark" accent={accent} format={format}>
     {/* Aurora */}
     <div style={{ position: "absolute", inset: 0, overflow: "hidden", zIndex: 0 }}>
       <div style={{
@@ -141,14 +143,14 @@ const TemplateTip = ({ data, showLogo, accent = "violet" }) => (
       backgroundImage: "radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px)",
       backgroundSize: "32px 32px",
     }} />
-    <TipContent data={data} showLogo={showLogo} isLight={false} accent={accent} />
+    <TipContent data={data} showLogo={showLogo} isLight={false} accent={accent} format={format} />
   </Frame>
 );
 
-const ThemedTip = ({ data, showLogo, theme = "dark", accent = "violet" }) => {
+const ThemedTip = ({ data, showLogo, theme = "dark", accent = "violet", format = "square" }) => {
   if (theme === "light") {
     return (
-      <Frame theme="light" accent={accent}>
+      <Frame theme="light" accent={accent} format={format}>
         <div style={{ position: "absolute", inset: 0, zIndex: 0,
           background: `
             radial-gradient(900px 700px at 0% 0%, rgba(139,92,255,0.15), transparent 55%),
@@ -160,11 +162,11 @@ const ThemedTip = ({ data, showLogo, theme = "dark", accent = "violet" }) => {
           backgroundImage: "radial-gradient(rgba(0,0,0,0.08) 1px, transparent 1px)",
           backgroundSize: "32px 32px",
         }} />
-        <TipContent data={data} showLogo={showLogo} isLight accent={accent} />
+        <TipContent data={data} showLogo={showLogo} isLight accent={accent} format={format} />
       </Frame>
     );
   }
-  return <TemplateTip data={data} showLogo={showLogo} accent={accent} />;
+  return <TemplateTip data={data} showLogo={showLogo} accent={accent} format={format} />;
 };
 
 Object.assign(window, { TemplateTip, ThemedTip, TipContent });

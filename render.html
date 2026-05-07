@@ -10,8 +10,9 @@
 <style>
   html, body { margin: 0; padding: 0; background: #07070A; font-family: 'Geist', system-ui, sans-serif; overflow: hidden; }
   * { box-sizing: border-box; }
-  /* Pin frame to viewport top-left, fixed 1080×1080 */
+  /* Pin frame to viewport top-left, fixed 1080×1080 (square) or 1080×1350 (Instagram 4:5) */
   #render-root { width: 1080px; height: 1080px; }
+  #render-root.is-portrait { height: 1350px; }
 </style>
 </head>
 <body>
@@ -45,6 +46,10 @@ const getNum = (k, fallback) => {
 const template = get("template", "tip"); // tip | cover | case | tool | blog
 const theme    = get("theme", "dark");   // dark | light (all templates)
 const showLogo = getBool("showLogo", true);
+// format: "square" (1080x1080, LinkedIn default) or "ig"/"portrait" (1080x1350, Instagram 4:5)
+const formatRaw = get("format", "square").toLowerCase();
+const format = (formatRaw === "ig" || formatRaw === "portrait" || formatRaw === "instagram") ? "portrait" : "square";
+if (format === "portrait") document.getElementById("render-root").classList.add("is-portrait");
 const accentDefault = {
   tip: "violet",
   cover: "boom",
@@ -86,7 +91,7 @@ if (template === "tip") {
     ],
     footerNote: get("tipFooter", "boommaker.io"),
   };
-  element = <ThemedTip data={data} showLogo={showLogo} theme={theme} accent={accent} />;
+  element = <ThemedTip data={data} showLogo={showLogo} theme={theme} accent={accent} format={format} />;
 }
 
 if (template === "cover") {
@@ -99,7 +104,7 @@ if (template === "cover") {
     totalSlides:  getNum("coverTotalSlides", 8),
     swipeText:    get("coverSwipe", "Swipe"),
   };
-  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} format={format} />;
 }
 
 if (template === "case") {
@@ -121,7 +126,7 @@ if (template === "case") {
     ],
     footerHandle: get("caseFooter", "boommaker.io / cas-clients"),
   };
-  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} theme={theme} format={format} />;
 }
 
 if (template === "tool") {
@@ -140,7 +145,7 @@ if (template === "tool") {
     useCase:      get("toolUseCase", "Lead arrive sur le site → Airtable enrichit via Apollo → Slack ping le commercial → relance auto à J+3 si pas de réponse."),
     footerHandle: get("toolFooter", "boommaker.io / outils"),
   };
-  element = <TemplateTool data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+  element = <TemplateTool data={data} showLogo={showLogo} accent={accent} theme={theme} format={format} />;
 }
 
 if (template === "blog") {
@@ -156,7 +161,7 @@ if (template === "blog") {
     footerHandle:  get("blogFooter", "boommaker.io / blog"),
     imageUrl:      get("blogImageUrl", ""),
   };
-  element = <TemplateBlog data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+  element = <TemplateBlog data={data} showLogo={showLogo} accent={accent} theme={theme} format={format} />;
 }
 
 if (!element) {
