@@ -10,24 +10,22 @@
 <style>
   html, body { margin: 0; padding: 0; background: #07070A; font-family: 'Geist', system-ui, sans-serif; overflow: hidden; }
   * { box-sizing: border-box; }
-  /* Pin frame to viewport top-left, fixed 1080×1080 (square) or 1080×1350 (Instagram 4:5) */
+  /* Pin frame to viewport top-left, fixed 1080×1080 */
   #render-root { width: 1080px; height: 1080px; }
-  #render-root.is-portrait { height: 1350px; }
 </style>
 </head>
 <body>
 <div id="render-root"></div>
 
-<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 
 <script type="text/babel" src="templates/bm-shared.jsx"></script>
 <script type="text/babel" src="templates/bm-tip.jsx"></script>
 <script type="text/babel" src="templates/bm-cover.jsx"></script>
 <script type="text/babel" src="templates/bm-case.jsx"></script>
-<script type="text/babel" src="templates/bm-tool.jsx"></script>
-<script type="text/babel" src="templates/bm-blog.jsx"></script>
+<script type="text/babel" src="templates/bm-carousel.jsx"></script>
 
 <script type="text/babel" data-presets="env,react">
 const params = new URLSearchParams(window.location.search);
@@ -43,21 +41,10 @@ const getNum = (k, fallback) => {
   return Number.isNaN(n) ? fallback : n;
 };
 
-const template = get("template", "tip"); // tip | cover | case | tool | blog
-const theme    = get("theme", "dark");   // dark | light (all templates)
+const template = get("template", "tip"); // tip | cover | case
+const theme    = get("theme", "dark");   // dark | light (tip only)
 const showLogo = getBool("showLogo", true);
-// format: "square" (1080x1080, LinkedIn default) or "ig"/"portrait" (1080x1350, Instagram 4:5)
-const formatRaw = get("format", "square").toLowerCase();
-const format = (formatRaw === "ig" || formatRaw === "portrait" || formatRaw === "instagram") ? "portrait" : "square";
-if (format === "portrait") document.getElementById("render-root").classList.add("is-portrait");
-const accentDefault = {
-  tip: "violet",
-  cover: "boom",
-  case: "cyan",
-  tool: "boom",
-  blog: "violet",
-};
-const accent   = get("accent", accentDefault[template] || "violet");
+const accent   = get("accent", (template === "cover" || template === "carousel") ? "boom" : template === "case" ? "cyan" : "violet");
 const font     = get("font", "geist");
 
 // font override
@@ -70,10 +57,6 @@ const sans = fontMap[font] || fontMap.geist;
 const styleEl = document.createElement("style");
 styleEl.textContent = `.bm-frame, .bm-frame h1, .bm-frame p, .bm-frame div, .bm-frame span { font-family: ${sans}, 'Helvetica Neue', Arial, sans-serif; }`;
 document.head.appendChild(styleEl);
-
-// Body background follows theme so screenshots look clean
-document.documentElement.style.background = theme === "light" ? "#F5F4EE" : "#07070A";
-document.body.style.background = theme === "light" ? "#F5F4EE" : "#07070A";
 
 let element = null;
 
@@ -91,7 +74,7 @@ if (template === "tip") {
     ],
     footerNote: get("tipFooter", "boommaker.io"),
   };
-  element = <ThemedTip data={data} showLogo={showLogo} theme={theme} accent={accent} format={format} />;
+  element = <ThemedTip data={data} showLogo={showLogo} theme={theme} accent={accent} />;
 }
 
 if (template === "cover") {
@@ -104,7 +87,7 @@ if (template === "cover") {
     totalSlides:  getNum("coverTotalSlides", 8),
     swipeText:    get("coverSwipe", "Swipe"),
   };
-  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} format={format} />;
+  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} />;
 }
 
 if (template === "case") {
@@ -126,47 +109,83 @@ if (template === "case") {
     ],
     footerHandle: get("caseFooter", "boommaker.io / cas-clients"),
   };
-  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} theme={theme} format={format} />;
+  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} />;
 }
 
-if (template === "tool") {
-  const data = {
-    pickNumber:   getNum("toolPickNumber", 4),
-    category:     get("toolCategory", "AUTOMATISATION / NO-CODE"),
-    toolName:     get("toolName", "Make.com"),
-    tagline:      get("toolTagline", "Le couteau suisse des scénarios"),
-    headline:     get("toolHeadline", "Le seul outil qui m'a permis"),
-    headlineEm:   get("toolHeadlineEm", "d'arrêter d'embaucher pour copier-coller."),
-    rating:       getNum("toolRating", 5),
-    ratingMax:    getNum("toolRatingMax", 5),
-    why1:         get("toolWhy1", "Conditions visuelles, sans une ligne de code."),
-    why2:         get("toolWhy2", "Quand t'as 4+ outils à connecter en cascade."),
-    why3:         get("toolWhy3", "9€/mois, scaling clair, communauté FR active."),
-    useCase:      get("toolUseCase", "Lead arrive sur le site → Airtable enrichit via Apollo → Slack ping le commercial → relance auto à J+3 si pas de réponse."),
-    footerHandle: get("toolFooter", "boommaker.io / outils"),
-  };
-  element = <TemplateTool data={data} showLogo={showLogo} accent={accent} theme={theme} format={format} />;
-}
+// Carrousel complet : 1 ligne = 5 slides. On choisit la slide via ?slide=1..5
+// 1 = couverture · 2-4 = workflows 01/02/03 · 5 = CTA finale
+if (template === "carousel") {
+  const slide = getNum("slide", 1);
+  const total = getNum("coverTotalSlides", 5);
+  const kicker = get("kicker", "Playbook — Workflows");
 
-if (template === "blog") {
-  const data = {
-    category:      get("blogCategory", "AUTOMATISATION"),
-    articleNumber: getNum("blogArticleNumber", 12),
-    title:         get("blogTitle", "Comment j'ai remplacé"),
-    titleEm:       get("blogTitleEm", "ma boîte mail par un agent IA."),
-    excerpt:       get("blogExcerpt", "Pendant 6 mois j'ai testé 7 setups différents pour automatiser ma gestion d'inbox. Voici celui qui tient et qui m'a fait gagner 1h/jour."),
-    readTime:      get("blogReadTime", "8 min"),
-    publishDate:   get("blogPublishDate", "05.05.2026"),
-    author:        get("blogAuthor", "Julia Levy"),
-    footerHandle:  get("blogFooter", "boommaker.io / blog"),
-    imageUrl:      get("blogImageUrl", ""),
-  };
-  element = <TemplateBlog data={data} showLogo={showLogo} accent={accent} theme={theme} format={format} />;
+  const wf = (n, defaults) => ({
+    kicker,
+    number: String(n).padStart(2, "0"),
+    title1:  get(`wf${n}Title`,    defaults.title1),
+    titleEm: get(`wf${n}TitleEm`,  defaults.titleEm),
+    body:    get(`wf${n}Body`,     defaults.body),
+    steps: [
+      { tag: get(`wf${n}T1`, defaults.tags[0]), text: get(`wf${n}S1`, defaults.steps[0]) },
+      { tag: get(`wf${n}T2`, defaults.tags[1]), text: get(`wf${n}S2`, defaults.steps[1]) },
+      { tag: get(`wf${n}T3`, defaults.tags[2]), text: get(`wf${n}S3`, defaults.steps[2]) },
+    ],
+    statValue: get(`wf${n}Stat`, defaults.stat),
+    statLabel: get(`wf${n}StatLabel`, "Gagnées / sem."),
+  });
+
+  if (slide === 1) {
+    const data = {
+      kicker:      get("coverKicker", "Boom Maker — Playbook"),
+      title1:      get("coverTitle1", "3 workflows"),
+      titleEm:     get("coverTitleEm", "qui font gagner"),
+      title2:      get("coverTitle2", "10h / semaine."),
+      subtitle:    get("coverSubtitle", "Le carrousel à lire avant de payer un stagiaire pour copier-coller des leads dans Notion."),
+      totalSlides: total,
+      swipeText:   get("coverSwipe", "Swipe"),
+    };
+    element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+  } else if (slide >= 2 && slide <= 4) {
+    // slide 2 → workflow 01 (wf1), slide 3 → wf2, slide 4 → wf3
+    const presets = {
+      1: { title1: "La capture de leads", titleEm: "qui se range seule.",
+           body: "Un formulaire qui enrichit, score et range chaque lead dans le CRM — pendant que tu fais autre chose.",
+           tags: ["Repérer", "Enrichir", "Ranger"],
+           steps: ["Formulaire → trigger", "Enrichissement IA", "CRM + ping Slack"], stat: "≈ 4h" },
+      2: { title1: "Le reporting", titleEm: "qui s'écrit la nuit.",
+           body: "Les chiffres se collectent, le dashboard se met à jour, l'IA rédige le résumé. Tu lis, tu valides, c'est tout.",
+           tags: ["Collecter", "Agréger", "Diffuser"],
+           steps: ["Collecte des sources", "Dashboard auto", "Résumé IA par email"], stat: "≈ 3h" },
+      3: { title1: "Le SAV", titleEm: "qui répond avant toi.",
+           body: "Chaque ticket est trié, le brouillon de réponse est prêt. Tu n'as plus qu'à relire et envoyer.",
+           tags: ["Recevoir", "Trier", "Répondre"],
+           steps: ["Ticket entrant", "Tri + priorité IA", "Brouillon prêt"], stat: "≈ 3h" },
+    };
+    const wfNum = slide - 1;
+    element = <TemplateCarouselContent data={wf(wfNum, presets[wfNum])} showLogo={showLogo} accent={accent} theme={theme} index={slide} total={total} />;
+  } else {
+    const recap = [
+      `${get("wf1Title", "La capture de leads")} ${get("wf1TitleEm", "qui se range seule.")}`,
+      `${get("wf2Title", "Le reporting")} ${get("wf2TitleEm", "qui s'écrit la nuit.")}`,
+      `${get("wf3Title", "Le SAV")} ${get("wf3TitleEm", "qui répond avant toi.")}`,
+    ];
+    const data = {
+      kicker,
+      title1:   get("ctaTitle1", "Et si on automatisait"),
+      titleEm:  get("ctaTitleEm", "les vôtres ?"),
+      title2:   get("ctaTitle2", ""),
+      subtitle: get("ctaSubtitle", "On audite vos process, on repère les 3 workflows à plus fort ROI, et on vous livre un plan clair."),
+      recap,
+      ctaText:  get("ctaText", "Réserver un audit gratuit"),
+      ctaUrl:   get("ctaUrl", "boommaker.io / audit"),
+    };
+    element = <TemplateCarouselCTA data={data} showLogo={showLogo} accent={accent} theme={theme} index={slide} total={total} />;
+  }
 }
 
 if (!element) {
   element = <div style={{ padding: 80, color: "#fff", fontSize: 24 }}>
-    Param <code>?template=</code> manquant. Valeurs : <code>tip</code>, <code>cover</code>, <code>case</code>, <code>tool</code>, <code>blog</code>.
+    Param <code>?template=</code> manquant. Valeurs : <code>tip</code>, <code>cover</code>, <code>case</code>, <code>carousel</code> (avec <code>&slide=1..5</code>).
   </div>;
 }
 
@@ -176,7 +195,7 @@ ReactDOM.createRoot(document.getElementById("render-root")).render(element);
 window.addEventListener("load", () => {
   setTimeout(() => {
     document.body.setAttribute("data-render-ready", "true");
-  }, 1200); // let fonts settle
+  }, 800); // let fonts settle
 });
 </script>
 </body>
