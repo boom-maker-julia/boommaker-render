@@ -8,10 +8,12 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  html, body { margin: 0; padding: 0; background: #07070A; font-family: 'Geist', system-ui, sans-serif; overflow: hidden; }
+  html, body { margin: 0; padding: 0; background: #07070A; font-family: 'Geist', system-ui, sans-serif; }
   * { box-sizing: border-box; }
-  /* Pin frame to viewport top-left, fixed 1080×1080 */
-  #render-root { width: 1080px; height: 1080px; }
+  /* Largeur fixe 1080 ; la hauteur s'adapte au format (1080 carré / 1350 portrait Instagram)
+     pour que HCTI (selector=#render-root) capture toute l'image sans la couper. */
+  #render-root { width: 1080px; }
+  #render-root > * { display: block; }
 </style>
 </head>
 <body>
@@ -26,6 +28,8 @@
 <script type="text/babel" src="templates/bm-cover.jsx"></script>
 <script type="text/babel" src="templates/bm-case.jsx"></script>
 <script type="text/babel" src="templates/bm-carousel.jsx"></script>
+<script type="text/babel" src="templates/bm-tool.jsx"></script>
+<script type="text/babel" src="templates/bm-blog.jsx"></script>
 
 <script type="text/babel" data-presets="env,react">
 const params = new URLSearchParams(window.location.search);
@@ -41,11 +45,13 @@ const getNum = (k, fallback) => {
   return Number.isNaN(n) ? fallback : n;
 };
 
-const template = get("template", "tip"); // tip | cover | case
-const theme    = get("theme", "dark");   // dark | light (tip only)
+const template = get("template", "tip"); // tip | cover | case | tool | blog | carousel
+const theme    = get("theme", "dark");   // dark | light
 const showLogo = getBool("showLogo", true);
-const accent   = get("accent", (template === "cover" || template === "carousel") ? "boom" : template === "case" ? "cyan" : "violet");
+const accent   = get("accent", (template === "cover" || template === "carousel" || template === "tool") ? "boom" : template === "case" ? "cyan" : "violet");
 const font     = get("font", "geist");
+// format=ig → Instagram 1080×1350 (portrait) ; sinon carré 1080×1080
+const fmt      = (get("format", "") === "ig") ? "portrait" : "square";
 
 // font override
 const fontMap = {
@@ -74,7 +80,7 @@ if (template === "tip") {
     ],
     footerNote: get("tipFooter", "boommaker.io"),
   };
-  element = <ThemedTip data={data} showLogo={showLogo} theme={theme} accent={accent} />;
+  element = <ThemedTip data={data} showLogo={showLogo} theme={theme} accent={accent} format={fmt} />;
 }
 
 if (template === "cover") {
@@ -87,7 +93,7 @@ if (template === "cover") {
     totalSlides:  getNum("coverTotalSlides", 8),
     swipeText:    get("coverSwipe", "Swipe"),
   };
-  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+  element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
 }
 
 if (template === "case") {
@@ -109,7 +115,42 @@ if (template === "case") {
     ],
     footerHandle: get("caseFooter", "boommaker.io / cas-clients"),
   };
-  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} />;
+  element = <TemplateCase data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
+}
+
+if (template === "tool") {
+  const data = {
+    pickNumber: getNum("toolPickNumber", 1),
+    category:   get("toolCategory", "Automatisation / No-code"),
+    toolName:   get("toolName", "Make.com"),
+    tagline:    get("toolTagline", "Le couteau suisse des scénarios"),
+    headline:   get("toolHeadline", "L'outil qui m'a permis"),
+    headlineEm: get("toolHeadlineEm", "d'arrêter de copier-coller."),
+    rating:     getNum("toolRating", 5),
+    ratingMax:  getNum("toolRatingMax", 5),
+    why1:       get("toolWhy1", ""),
+    why2:       get("toolWhy2", ""),
+    why3:       get("toolWhy3", ""),
+    useCase:    get("toolUseCase", ""),
+    footerHandle: get("toolFooter", "boommaker.io"),
+  };
+  element = <TemplateTool data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
+}
+
+if (template === "blog") {
+  const data = {
+    category:      get("blogCategory", "Automatisation"),
+    articleNumber: getNum("blogArticleNumber", 1),
+    title:         get("blogTitle", "Comment j'ai remplacé"),
+    titleEm:       get("blogTitleEm", "ma boîte mail par un agent IA."),
+    excerpt:       get("blogExcerpt", ""),
+    readTime:      get("blogReadTime", "5 min"),
+    publishDate:   get("blogPublishDate", ""),
+    author:        get("blogAuthor", "Julia Levy"),
+    imageUrl:      get("blogImageUrl", ""),
+    footerHandle:  get("blogFooter", "boommaker.io"),
+  };
+  element = <TemplateBlog data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
 }
 
 // Carrousel complet : 1 ligne = 5 slides. On choisit la slide via ?slide=1..5
