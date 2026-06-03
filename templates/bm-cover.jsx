@@ -1,9 +1,9 @@
-/* global React, Frame, Grain, TemplateFooter */
+/* global React, Frame, Grain, TemplateFooter, ContentBox */
 // Template 2 — COVER (Carrousel cover slide)
 // Big editorial title, italic serif underlined with gradient, slide counter.
 // Supports theme="dark" (default) and theme="light".
 
-const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark" }) => {
+const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark", format = "square" }) => {
   const { kicker, title1, titleEm, title2, subtitle, totalSlides, swipeText } = data;
   const isLight = theme === "light";
 
@@ -25,7 +25,7 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark" }) => {
   const counterAccent = isLight ? "#5B2DE6" : "#FFE94A";
 
   return (
-    <Frame theme={theme} accent={accent}>
+    <Frame theme={theme} accent={accent} format={format}>
       {/* Mesh gradient — softened for light */}
       <div style={{
         position: "absolute", inset: 0, zIndex: 0,
@@ -42,6 +42,7 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark" }) => {
             `,
       }} />
 
+      <ContentBox format={format}>
       {/* Vertical hairlines */}
       <svg style={{ position: "absolute", inset: 0, zIndex: 1, opacity: isLight ? 0.6 : 0.3 }} width="1080" height="1080">
         {[120, 360, 720, 960].map((x, i) => (
@@ -135,6 +136,7 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark" }) => {
           <path d="M1 7 H18 M12 1 L18 7 L12 13" stroke={counterAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
+      </ContentBox>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
       <TemplateFooter showLogo={showLogo} isDark={!isLight} accent={counterAccent} />
