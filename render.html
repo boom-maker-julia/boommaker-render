@@ -185,7 +185,7 @@ if (template === "carousel") {
       totalSlides: total,
       swipeText:   get("coverSwipe", "Swipe"),
     };
-    element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} />;
+    element = <TemplateCover data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
   } else if (slide >= 2 && slide <= 4) {
     // slide 2 → workflow 01 (wf1), slide 3 → wf2, slide 4 → wf3
     const presets = {
@@ -203,7 +203,7 @@ if (template === "carousel") {
            steps: ["Ticket entrant", "Tri + priorité IA", "Brouillon prêt"], stat: "≈ 3h" },
     };
     const wfNum = slide - 1;
-    element = <TemplateCarouselContent data={wf(wfNum, presets[wfNum])} showLogo={showLogo} accent={accent} theme={theme} index={slide} total={total} />;
+    element = <TemplateCarouselContent data={wf(wfNum, presets[wfNum])} showLogo={showLogo} accent={accent} theme={theme} index={slide} total={total} format={fmt} />;
   } else {
     const recap = [
       `${get("wf1Title", "La capture de leads")} ${get("wf1TitleEm", "qui se range seule.")}`,
@@ -220,7 +220,7 @@ if (template === "carousel") {
       ctaText:  get("ctaText", "Réserver un audit gratuit"),
       ctaUrl:   get("ctaUrl", "boommaker.io / audit"),
     };
-    element = <TemplateCarouselCTA data={data} showLogo={showLogo} accent={accent} theme={theme} index={slide} total={total} />;
+    element = <TemplateCarouselCTA data={data} showLogo={showLogo} accent={accent} theme={theme} index={slide} total={total} format={fmt} />;
   }
 }
 

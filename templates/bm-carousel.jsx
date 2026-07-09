@@ -103,16 +103,17 @@ const ItalicUnderline = ({ children, t, gradId, fontSize }) => (
 // CONTENT slide — one workflow per slide
 // data = { kicker, number, title1, titleEm, body, steps:[{tag,text}x3], statValue, statLabel }
 // ============================================================================
-const TemplateCarouselContent = ({ data, showLogo, accent = "boom", theme = "dark", index = 2, total = 5 }) => {
+const TemplateCarouselContent = ({ data, showLogo, accent = "boom", theme = "dark", index = 2, total = 5, format = "square" }) => {
   const isLight = theme === "light";
   const t = carouselTokens(isLight);
   const { kicker, number, title1, titleEm, body, steps = [], statValue, statLabel } = data;
   const gid = `cwfGrad-${index}`;
 
   return (
-    <Frame theme={theme} accent={accent}>
+    <Frame theme={theme} accent={accent} format={format}>
       <CarouselBackdrop isLight={isLight} t={t} />
 
+      <ContentBox format={format}>
       {/* Giant outline number, behind content, top-right */}
       <div style={{
         position: "absolute", top: -90, right: 24, zIndex: 1, pointerEvents: "none",
@@ -204,6 +205,7 @@ const TemplateCarouselContent = ({ data, showLogo, accent = "boom", theme = "dar
           }}>{statValue}</div>
         </div>
       </div>
+      </ContentBox>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
       <TemplateFooter showLogo={showLogo} isDark={!isLight} accent={t.counterAccent} />
@@ -215,7 +217,7 @@ const TemplateCarouselContent = ({ data, showLogo, accent = "boom", theme = "dar
 // CTA / closing slide
 // data = { kicker, title1, titleEm, title2, subtitle, recap:[..x3], ctaText, ctaUrl }
 // ============================================================================
-const TemplateCarouselCTA = ({ data, showLogo, accent = "boom", theme = "dark", index = 5, total = 5 }) => {
+const TemplateCarouselCTA = ({ data, showLogo, accent = "boom", theme = "dark", index = 5, total = 5, format = "square" }) => {
   const isLight = theme === "light";
   const t = carouselTokens(isLight);
   const { kicker, title1, titleEm, title2, subtitle, recap = [], ctaText, ctaUrl } = data;
@@ -225,7 +227,7 @@ const TemplateCarouselCTA = ({ data, showLogo, accent = "boom", theme = "dark", 
     : "linear-gradient(135deg, rgba(139,92,255,0.32), rgba(0,224,213,0.20))";
 
   return (
-    <Frame theme={theme} accent={accent}>
+    <Frame theme={theme} accent={accent} format={format}>
       <div style={{
         position: "absolute", inset: 0, zIndex: 0,
         background: isLight
@@ -242,6 +244,7 @@ const TemplateCarouselCTA = ({ data, showLogo, accent = "boom", theme = "dark", 
         ))}
       </svg>
 
+      <ContentBox format={format}>
       <CarouselTopBar kicker={kicker} index={index} total={total} t={t} />
 
       {/* Recap of the 3 workflows */}
@@ -304,6 +307,7 @@ const TemplateCarouselCTA = ({ data, showLogo, accent = "boom", theme = "dark", 
           }}>{ctaUrl}</div>
         </div>
       </div>
+      </ContentBox>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
       <TemplateFooter showLogo={showLogo} isDark={!isLight} accent={t.counterAccent} />
