@@ -136,8 +136,9 @@ const TemplateCarouselContent = ({ data, showLogo, accent = "boom", theme = "dar
         Workflow {number}
       </div>
 
-      {/* Headline — sans line, italic underline beneath (cover rhythm) */}
+      {/* Headline — FitBox : rétrécit si le titre déborde vers le corps */}
       <div style={{ position: "absolute", left: 64, right: 180, top: 234, zIndex: 10 }}>
+        <FitBox h={214}>
         <h1 style={{
           fontFamily: "'Geist', sans-serif", fontWeight: 600, fontSize: 76, lineHeight: 0.98,
           letterSpacing: "-0.045em", margin: 0, color: t.ink, textWrap: "balance",
@@ -145,14 +146,17 @@ const TemplateCarouselContent = ({ data, showLogo, accent = "boom", theme = "dar
           {title1}<br />
           <ItalicUnderline t={t} gradId={gid} fontSize={80}>{titleEm}</ItalicUnderline>
         </h1>
+        </FitBox>
       </div>
 
-      {/* Body */}
+      {/* Body — FitBox : rétrécit si le corps déborde vers la bande workflow */}
       <div style={{ position: "absolute", left: 64, right: 360, top: 466, zIndex: 10 }}>
+        <FitBox h={260}>
         <p style={{
           fontSize: 26, lineHeight: 1.42, margin: 0, color: t.ink2,
           textWrap: "pretty", maxWidth: 640, fontWeight: 300,
         }}>{body}</p>
+        </FitBox>
       </div>
 
       {/* Workflow strip — 3 step nodes + temps-gagné cell (mirrors case tape) */}

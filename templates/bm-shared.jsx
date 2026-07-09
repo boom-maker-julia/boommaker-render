@@ -109,4 +109,36 @@ const ContentBox = ({ children, format = "square" }) => {
   );
 };
 
-Object.assign(window, { BMLogo, Frame, Grain, TemplateFooter, ContentBox, accentColors });
+// ---- FitBox: garde-fou anti-débordement -----------------------------------
+// Réserve une zone de hauteur `h` (et largeur `w` optionnelle). Si le texte
+// naturel est plus grand, on rétrécit TOUT le bloc (transform: scale) pour qu'il
+// rentre pile dans sa zone. Le texte reste entier — quand Claude écrit trop long,
+// le visuel réduit juste un peu la taille au lieu de casser la mise en page.
+// Se re-mesure une fois les web-fonts chargées (leurs métriques changent la hauteur).
+const FitBox = ({ h, w, origin = "left top", style, children }) => {
+  const ref = React.useRef(null);
+  React.useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const apply = () => {
+      // offsetHeight/Width = taille NATURELLE (les transforms ne l'affectent pas)
+      const kh = h ? h / el.offsetHeight : 1;
+      const kw = w ? w / el.offsetWidth : 1;
+      const k = Math.min(1, kh, kw);
+      el.style.transform = k < 1 ? `scale(${k})` : "none";
+    };
+    apply();
+    const raf = requestAnimationFrame(apply);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);
+    return () => cancelAnimationFrame(raf);
+  });
+  return (
+    <div style={{ height: h, width: w, overflow: "hidden", ...style }}>
+      <div ref={ref} style={{ transformOrigin: origin, width: w || "100%" }}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+Object.assign(window, { BMLogo, Frame, Grain, TemplateFooter, ContentBox, accentColors, FitBox });

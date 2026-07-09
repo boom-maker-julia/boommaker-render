@@ -64,8 +64,9 @@ const TipContent = ({ data, showLogo, isLight, accent = "violet", format = "squa
         {String(tipNumber).padStart(2, "0")}
       </div>
 
-      {/* Headline + body */}
+      {/* Headline + body — FitBox : rétrécit si trop long, ne chevauche jamais les cartes */}
       <div style={{ position: "absolute", top: 240, left: 64, right: 64, zIndex: 10 }}>
+        <FitBox h={452}>
         <h1 style={{
           fontFamily: "'Geist', sans-serif",
           fontWeight: 600, fontSize: 92, lineHeight: 0.95,
@@ -84,6 +85,7 @@ const TipContent = ({ data, showLogo, isLight, accent = "violet", format = "squa
           marginTop: 36, fontSize: 26, lineHeight: 1.45,
           color: ink2, maxWidth: 880, textWrap: "pretty", fontWeight: 300,
         }}>{body}</p>
+        </FitBox>
       </div>
 
       {/* 3 step cards */}

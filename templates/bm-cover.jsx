@@ -78,8 +78,9 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark", format
         </div>
       </div>
 
-      {/* Big title */}
+      {/* Big title — FitBox : rétrécit si le titre déborde vers le sous-titre */}
       <div style={{ position: "absolute", left: 64, right: 64, top: 240, zIndex: 10 }}>
+        <FitBox h={520}>
         <h1 style={{
           fontFamily: "'Geist', sans-serif",
           fontWeight: 600, fontSize: 132, lineHeight: 0.92,
@@ -109,6 +110,7 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark", format
           </span>
           {title2 ? <><br />{title2}</> : null}
         </h1>
+        </FitBox>
       </div>
 
       {/* Subtitle */}

@@ -117,10 +117,11 @@ const TemplateTool = ({ data, showLogo = true, accent = "boom", theme = "dark", 
         </div>
       </div>
 
-      {/* Headline */}
+      {/* Headline — FitBox : rétrécit si le titre déborde vers la note */}
       <div style={{
         position: "absolute", top: 360, left: 64, right: 64, zIndex: 10
       }}>
+        <FitBox h={165}>
         <h1 style={{
           fontFamily: "'Geist', sans-serif",
           fontWeight: 500, fontSize: 56, lineHeight: 1.05,
@@ -134,6 +135,7 @@ const TemplateTool = ({ data, showLogo = true, accent = "boom", theme = "dark", 
             WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent"
           }}>{headlineEm}</span>
         </h1>
+        </FitBox>
       </div>
 
       {/* Rating */}

@@ -85,8 +85,9 @@ const TemplateCase = ({ data, showLogo, accent = "cyan", theme = "dark", format 
         </div>
       </div>
 
-      {/* Headline */}
+      {/* Headline — FitBox : rétrécit si le titre déborde vers la métrique */}
       <div style={{ position: "absolute", top: 130, left: 64, right: 64, zIndex: 10 }}>
+        <FitBox h={170}>
         <h1 style={{
           fontFamily: "'Geist', sans-serif",
           lineHeight: 1.05,
@@ -100,6 +101,7 @@ const TemplateCase = ({ data, showLogo, accent = "cyan", theme = "dark", format 
             fontSize: "60px", letterSpacing: "-0.02em",
           }}>{headlineEm}</span>
         </h1>
+        </FitBox>
       </div>
 
       {/* Big metric */}
