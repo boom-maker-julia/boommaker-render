@@ -64,6 +64,9 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark", format
           <span style={{ display: "inline-block", width: 28, height: 1, background: counterAccent }} />
           {kicker}
         </div>
+        {/* Compteur de carrousel : masqué pour une image unique (totalSlides <= 1),
+            sinon "01 / NN" indiquerait un carrousel qui n'existe pas. */}
+        {Number(totalSlides) > 1 && (
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 10,
           fontFamily: "'Geist Mono', monospace",
@@ -76,6 +79,7 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark", format
           <span style={{ opacity: 0.5 }}>/</span>
           <span>{String(totalSlides).padStart(2, "0")}</span>
         </div>
+        )}
       </div>
 
       {/* Big title — FitBox : rétrécit si le titre déborde vers le sous-titre */}
