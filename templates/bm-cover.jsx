@@ -125,7 +125,8 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark", format
         }}>{subtitle}</p>
       </div>
 
-      {/* Swipe indicator */}
+      {/* Swipe indicator — masqué pour une image unique (pas de carrousel) */}
+      {Number(totalSlides) > 1 && (
       <div style={{
         position: "absolute", bottom: 200, right: 64, zIndex: 10,
         display: "flex", alignItems: "center", gap: 14,
@@ -142,6 +143,7 @@ const TemplateCover = ({ data, showLogo, accent = "boom", theme = "dark", format
           <path d="M1 7 H18 M12 1 L18 7 L12 13" stroke={counterAccent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
+      )}
       </ContentBox>
 
       <Grain opacity={isLight ? 0.25 : 0.5} />
