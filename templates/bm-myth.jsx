@@ -8,6 +8,11 @@ const TemplateMyth = ({ data, showLogo, accent = "pink", theme = "dark", format 
     kicker, verdict, claim, truth, truthEm, detail, punchline
   } = data;
   const isLight = theme === "light";
+  // L'accent vient de la colonne Accent d'Airtable. Sur fond clair on prend une
+  // version foncee, sinon le jaune "boom" et le cyan sont illisibles.
+  const accLight = { violet: "#5B2DE6", cyan: "#007D78", boom: "#A88B00", pink: "#C2186F" };
+  const accDark  = { violet: "#B794FF", cyan: "#00E0D5", boom: "#FFE94A", pink: "#FF8AC4" };
+  const accCol = (isLight ? accLight : accDark)[accent] || (isLight ? accLight.violet : accDark.violet);
 
   const ink = isLight ? "#0A0A0E" : "#F5F5F7";
   const ink2 = isLight ? "#2A2A34" : "#D8D8E0";
@@ -16,8 +21,8 @@ const TemplateMyth = ({ data, showLogo, accent = "pink", theme = "dark", format 
   const surfaceBorder = isLight ? "rgba(0,0,0,0.10)" : "rgba(255,255,255,0.14)";
   const falseBg = isLight ? "rgba(0,0,0,0.035)" : "rgba(255,255,255,0.035)";
   const falseBorder = isLight ? "rgba(0,0,0,0.10)" : "rgba(255,255,255,0.10)";
-  const accentTeal = isLight ? "#007D78" : "#00E0D5";
-  const accentMauve = isLight ? "#5B2DE6" : "#B794FF";
+  const accentTeal = accCol;
+  const accentMauve = accCol;
 
   const trueGrad = isLight
     ? "linear-gradient(120deg, #5B2DE6 10%, #007D78 90%)"

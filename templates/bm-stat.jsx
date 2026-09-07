@@ -8,6 +8,11 @@ const TemplateStat = ({ data, showLogo, accent = "boom", theme = "dark", format 
     kicker, value, unit, label, context, comparison, source
   } = data;
   const isLight = theme === "light";
+  // L'accent vient de la colonne Accent d'Airtable. Sur fond clair on prend une
+  // version foncee, sinon le jaune "boom" et le cyan sont illisibles.
+  const accLight = { violet: "#5B2DE6", cyan: "#007D78", boom: "#A88B00", pink: "#C2186F" };
+  const accDark  = { violet: "#B794FF", cyan: "#00E0D5", boom: "#FFE94A", pink: "#FF8AC4" };
+  const accCol = (isLight ? accLight : accDark)[accent] || (isLight ? accLight.violet : accDark.violet);
 
   const ink = isLight ? "#0A0A0E" : "#F5F5F7";
   const ink2 = isLight ? "#2A2A34" : "#D8D8E0";
@@ -15,7 +20,7 @@ const TemplateStat = ({ data, showLogo, accent = "boom", theme = "dark", format 
   const surfaceBg = isLight ? "rgba(255,255,255,0.7)" : "rgba(20,20,28,0.55)";
   const surfaceBorder = isLight ? "rgba(0,0,0,0.10)" : "rgba(255,255,255,0.16)";
   const hairline = isLight ? "rgba(0,0,0,0.10)" : "rgba(255,255,255,0.14)";
-  const accentTeal = isLight ? "#007D78" : "#00E0D5";
+  const accentTeal = accCol;
 
   // Dégradé du grand chiffre, même famille que le Case mais plus contrasté
   const valueGrad = isLight
@@ -118,7 +123,7 @@ const TemplateStat = ({ data, showLogo, accent = "boom", theme = "dark", format 
             }}>{label}</div>
             <div style={{
               height: 2, width: 120,
-              background: `linear-gradient(90deg, ${isLight ? "#5B2DE6" : "#B794FF"}, transparent)`,
+              background: `linear-gradient(90deg, ${accCol}, transparent)`,
             }} />
           </FitBox>
         </div>
@@ -148,7 +153,7 @@ const TemplateStat = ({ data, showLogo, accent = "boom", theme = "dark", format 
               }}>
                 <span style={{
                   fontFamily: "'Instrument Serif', serif", fontStyle: "italic",
-                  fontSize: 34, color: isLight ? "#5B2DE6" : "#B794FF",
+                  fontSize: 34, color: accCol,
                 }}>soit</span>
                 {comparison}
               </div>
