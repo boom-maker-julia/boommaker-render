@@ -54,12 +54,12 @@ const getNum = (k, fallback) => {
   return Number.isNaN(n) ? fallback : n;
 };
 
-const template = get("template", "tip"); // tip | cover | case | tool | blog | carousel | stat | myth | checklist
-const theme    = get("theme", "dark");   // dark | light
+const template = getNE("template", "tip"); // tip | cover | case | tool | blog | carousel | stat | myth | checklist
+const theme    = getNE("theme", "dark");   // dark | light
 const showLogo = getBool("showLogo", true);
 const accentDefaults = { cover: "boom", carousel: "boom", tool: "boom", case: "cyan", stat: "boom", myth: "pink", checklist: "violet" };
-const accent   = get("accent", accentDefaults[template] || "violet");
-const font     = get("font", "geist");
+const accent   = getNE("accent", accentDefaults[template] || "violet");
+const font     = getNE("font", "geist");
 // format=ig → Instagram 1080×1350 (portrait) ; sinon carré 1080×1080
 const fmt      = (get("format", "") === "ig") ? "portrait" : "square";
 
