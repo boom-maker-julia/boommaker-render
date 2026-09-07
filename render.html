@@ -37,6 +37,12 @@
 <script type="text/babel" data-presets="env,react">
 const params = new URLSearchParams(window.location.search);
 const get = (k, fallback) => params.has(k) ? params.get(k) : fallback;
+// getNE = "get non-empty" : un param present mais VIDE (champ Airtable non rempli)
+// retombe sur le defaut, au lieu d'afficher un badge ou un titre vide.
+const getNE = (k, fallback) => {
+  const v = params.has(k) ? params.get(k) : "";
+  return (v && v.trim().length) ? v : fallback;
+};
 const getBool = (k, fallback) => {
   if (!params.has(k)) return fallback;
   const v = params.get(k).toLowerCase();
@@ -159,7 +165,7 @@ if (template === "blog") {
 
 if (template === "stat") {
   const data = {
-    kicker:     get("statKicker", "Chiffre clé"),
+    kicker:     getNE("statKicker", "Chiffre clé"),
     value:      get("statValue", "3,4"),
     unit:       get("statUnit", "%"),
     label:      get("statLabel", "Contacts réellement joignables"),
@@ -172,8 +178,8 @@ if (template === "stat") {
 
 if (template === "myth") {
   const data = {
-    kicker:    get("mythKicker", "Idée reçue"),
-    verdict:   get("mythVerdict", "Faux"),
+    kicker:    getNE("mythKicker", "Idée reçue"),
+    verdict:   getNE("mythVerdict", "Faux"),
     claim:     get("mythClaim", "Plus tu envoies de messages, plus tu signes."),
     truth:     get("mythTruth", "Le levier, c'est le taux de réponse,"),
     truthEm:   get("mythTruthEm", "pas le volume."),
@@ -185,7 +191,7 @@ if (template === "myth") {
 
 if (template === "checklist") {
   const data = {
-    kicker:  get("checkKicker", "À vérifier"),
+    kicker:  getNE("checkKicker", "À vérifier"),
     title:   get("checkTitle", "Avant de lancer"),
     titleEm: get("checkTitleEm", "ta première séquence."),
     intro:   get("checkIntro", ""),
