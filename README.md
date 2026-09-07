@@ -122,6 +122,49 @@ Défauts d'accent : `tip`→`violet`, `cover`→`boom`, `case`→`cyan`.
 | `caseProof3`      | texte  | `ROI < 6 semaines`                    |
 | `caseFooter`      | texte  | `boommaker.io / cas-clients`          |
 
+### `template=stat` — Chiffre choc
+
+Un seul très grand nombre plein cadre. Le chiffre se réduit tout seul s'il est long
+(ex : `18 687`), donc pas besoin de le raccourcir.
+
+| Param            | Type  | Défaut                                             |
+|------------------|-------|----------------------------------------------------|
+| `statKicker`     | texte | `Chiffre clé`                                       |
+| `statValue`      | texte | `3,4` — le nombre, sans l'unité                     |
+| `statUnit`       | texte | `%` — laisser vide s'il n'y a pas d'unité           |
+| `statLabel`      | texte | ce que mesure le chiffre, en petites capitales      |
+| `statContext`    | texte | 1 à 3 lignes qui expliquent le chiffre              |
+| `statComparison` | texte | optionnel, s'affiche après « soit » en bas          |
+| `statSource`     | texte | optionnel, affiché en haut à droite                 |
+
+### `template=myth` — Vrai / Faux
+
+Idée reçue barrée en haut, réalité en dessous, verdict en pastille entre les deux.
+
+| Param            | Type  | Défaut                                              |
+|------------------|-------|-----------------------------------------------------|
+| `mythKicker`     | texte | `Idée reçue`                                         |
+| `mythVerdict`    | texte | `Faux` — la pastille (`Vrai`, `Faux`, `Ça dépend`)   |
+| `mythClaim`      | texte | l'idée reçue, affichée barrée                        |
+| `mythTruth`      | texte | la réalité, début de phrase                          |
+| `mythTruthEm`    | texte | suite de la phrase, en italique dégradé              |
+| `mythDetail`     | texte | 1 à 2 lignes d'explication                           |
+| `mythPunchline`  | texte | optionnel, phrase de fin en italique                 |
+
+### `template=checklist` — Checklist
+
+3 à 6 cases à cocher. Les lignes se resserrent automatiquement selon le nombre
+d'items ; laisser un item vide pour en avoir moins.
+
+| Param           | Type  | Défaut                                        |
+|-----------------|-------|-----------------------------------------------|
+| `checkKicker`   | texte | `À vérifier`                                   |
+| `checkTitle`    | texte | titre, début                                   |
+| `checkTitleEm`  | texte | suite du titre, en italique dégradé            |
+| `checkIntro`    | texte | optionnel, 1 ligne sous le titre               |
+| `checkItem1..6` | texte | les points à cocher (vide = ligne ignorée)     |
+| `checkNote`     | texte | optionnel, phrase de fin en italique           |
+
 ---
 
 ## 4) Exemple d'URL prête à coller

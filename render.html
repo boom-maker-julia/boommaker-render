@@ -30,6 +30,9 @@
 <script type="text/babel" src="templates/bm-carousel.jsx"></script>
 <script type="text/babel" src="templates/bm-tool.jsx"></script>
 <script type="text/babel" src="templates/bm-blog.jsx"></script>
+<script type="text/babel" src="templates/bm-stat.jsx"></script>
+<script type="text/babel" src="templates/bm-myth.jsx"></script>
+<script type="text/babel" src="templates/bm-checklist.jsx"></script>
 
 <script type="text/babel" data-presets="env,react">
 const params = new URLSearchParams(window.location.search);
@@ -45,10 +48,11 @@ const getNum = (k, fallback) => {
   return Number.isNaN(n) ? fallback : n;
 };
 
-const template = get("template", "tip"); // tip | cover | case | tool | blog | carousel
+const template = get("template", "tip"); // tip | cover | case | tool | blog | carousel | stat | myth | checklist
 const theme    = get("theme", "dark");   // dark | light
 const showLogo = getBool("showLogo", true);
-const accent   = get("accent", (template === "cover" || template === "carousel" || template === "tool") ? "boom" : template === "case" ? "cyan" : "violet");
+const accentDefaults = { cover: "boom", carousel: "boom", tool: "boom", case: "cyan", stat: "boom", myth: "pink", checklist: "violet" };
+const accent   = get("accent", accentDefaults[template] || "violet");
 const font     = get("font", "geist");
 // format=ig → Instagram 1080×1350 (portrait) ; sinon carré 1080×1080
 const fmt      = (get("format", "") === "ig") ? "portrait" : "square";
@@ -153,6 +157,51 @@ if (template === "blog") {
   element = <TemplateBlog data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
 }
 
+if (template === "stat") {
+  const data = {
+    kicker:     get("statKicker", "Chiffre clé"),
+    value:      get("statValue", "3,4"),
+    unit:       get("statUnit", "%"),
+    label:      get("statLabel", "Contacts réellement joignables"),
+    context:    get("statContext", "Sur 18 687 sociétés sorties du registre, 640 contacts atteignables au bout de la chaîne."),
+    comparison: get("statComparison", ""),
+    source:     get("statSource", ""),
+  };
+  element = <TemplateStat data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
+}
+
+if (template === "myth") {
+  const data = {
+    kicker:    get("mythKicker", "Idée reçue"),
+    verdict:   get("mythVerdict", "Faux"),
+    claim:     get("mythClaim", "Plus tu envoies de messages, plus tu signes."),
+    truth:     get("mythTruth", "Le levier, c'est le taux de réponse,"),
+    truthEm:   get("mythTruthEm", "pas le volume."),
+    detail:    get("mythDetail", "Doubler le volume double le coût. Améliorer le ciblage ne coûte presque rien et change tout le résultat."),
+    punchline: get("mythPunchline", ""),
+  };
+  element = <TemplateMyth data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
+}
+
+if (template === "checklist") {
+  const data = {
+    kicker:  get("checkKicker", "À vérifier"),
+    title:   get("checkTitle", "Avant de lancer"),
+    titleEm: get("checkTitleEm", "ta première séquence."),
+    intro:   get("checkIntro", ""),
+    items: [
+      get("checkItem1", "Ta liste est dédoublonnée contre ton CRM"),
+      get("checkItem2", "Chaque contact a un domaine web actif"),
+      get("checkItem3", "Le message 1 tient en 4 lignes"),
+      get("checkItem4", "Tu as fixé un seuil de réponse à mesurer"),
+      get("checkItem5", "Tu sais quoi faire des réponses positives"),
+      get("checkItem6", ""),
+    ],
+    note:    get("checkNote", ""),
+  };
+  element = <TemplateChecklist data={data} showLogo={showLogo} accent={accent} theme={theme} format={fmt} />;
+}
+
 // Carrousel complet : 1 ligne = 5 slides. On choisit la slide via ?slide=1..5
 // 1 = couverture · 2-4 = workflows 01/02/03 · 5 = CTA finale
 if (template === "carousel") {
@@ -226,7 +275,7 @@ if (template === "carousel") {
 
 if (!element) {
   element = <div style={{ padding: 80, color: "#fff", fontSize: 24 }}>
-    Param <code>?template=</code> manquant. Valeurs : <code>tip</code>, <code>cover</code>, <code>case</code>, <code>carousel</code> (avec <code>&slide=1..5</code>).
+    Param <code>?template=</code> manquant. Valeurs : <code>tip</code>, <code>cover</code>, <code>case</code>, <code>tool</code>, <code>blog</code>, <code>stat</code>, <code>myth</code>, <code>checklist</code>, <code>carousel</code> (avec <code>&slide=1..5</code>).
   </div>;
 }
 
